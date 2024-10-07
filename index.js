@@ -7,8 +7,8 @@ const breedSelect = document.getElementById("breedSelect");
 const infoDump = document.getElementById("infoDump");
 // The progress bar div element.
 const progressBar = document.getElementById("progressBar");
-// The get favourites button element.
-const getFavouritesBtn = document.getElementById("getFavouritesBtn");
+// The get favorites button element.
+const getFavoritesBtn = document.getElementById("getFavoritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
 const API_KEY = 'live_Emqpg66Ia69I9yepqFBUnnBvxOJoaKX20yigbe1IkZvkrjPFBO9otgvUN1itcLhg';
@@ -85,7 +85,7 @@ const handleBreedSelection = async () => {
   }
 };
 
-// Attach event listener to breedSelect
+
 breedSelect.addEventListener('change', handleBreedSelection);
 
 // Call the initial load immediately
@@ -120,41 +120,41 @@ const updateProgress = (progressEvent) => {
 };
 
 /**
- * 8. To practice posting data, we'll create a system to "favourite" certain images.
- * Post to the cat API's favourites endpoint with the given ID.
+ * 8. To practice posting data, we'll create a system to "favorite" certain images.
+ * Post to the cat API's favorites endpoint with the given ID.
  */
-export async function favourite(imgId) {
+export async function favorite(imgId) {
   try {
-    const response = await axios.post('/favourites', {
+    const response = await axios.post('/favorites', {
       image_id: imgId
     });
-    console.log('Image favorited:', response.data);
+    console.log('Image favored:', response.data);
   } catch (error) {
-    console.error('Error favoriting image:', error);
+    console.error('Error favouring image:', error);
   }
 }
 
 /**
- * 9. Create a getFavourites() function to retrieve all favourites from the cat API.
- * Clear the carousel and display your favourites when the button is clicked.
+ * 9. Create a getFavorites() function to retrieve all favorites from the cat API.
+ * Clear the carousel and display your favorites when the button is clicked.
  */
-const getFavourites = async () => {
+const getFavorites = async () => {
   try {
-    const response = await axios.get('/favourites');
-    const favourites = response.data;
+    const response = await axios.get('/favorites');
+    const favorites = response.data;
 
-    // Clear carousel and display favourites
+    // Clear carousel and display favorites
     Carousel.clear();
-    favourites.forEach(favourite => {
+    favorites.forEach(favorite => {
       const imgElement = document.createElement('img');
-      imgElement.src = favourite.image.url;
+      imgElement.src = favorite.image.url;
       Carousel.add(imgElement);
     });
   } catch (error) {
-    console.error('Error fetching favourites:', error);
+    console.error('Error fetching favorites:', error);
   }
 };
 
 
-getFavouritesBtn.addEventListener('click', getFavourites);
+getFavoritesBtn.addEventListener('click', getFavorites);
 
