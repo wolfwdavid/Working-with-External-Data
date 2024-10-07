@@ -109,3 +109,30 @@ export async function favourite(imgId) {
  * - Test other breeds as well. Not every breed has the same data available, so
  *   your code should account for this.
  */
+
+axios.get('https://api.thecatapi.com/v1/images/search', {
+  headers: {
+    'x-api-key': 'live_Emqpg66Ia69I9yepqFBUnnBvxOJoaKX20yigbe1IkZvkrjPFBO9otgvUN1itcLhg' // Add your API key if required
+  }
+})
+  .then(response => {
+    console.log(response.data); // ^_^ data
+  })
+  .catch(error => console.error('Error fetching cat image:', error));
+
+  const [catImageUrl, setCatImageUrl] = useState('');
+
+useEffect(() => {
+  axios.get('https://api.thecatapi.com/v1/images/search')
+    .then(response => {
+      const imageUrl = response.data[0].url; // Cat API 
+      setCatImageUrl(imageUrl);
+    })
+    .catch(error => console.error('Error fetching cat image:', error));
+}, []);
+
+return (
+  <div>
+    {catImageUrl && <img src={catImageUrl} alt="A cute cat" />}
+  </div>
+);
