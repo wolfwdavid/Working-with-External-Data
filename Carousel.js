@@ -34,42 +34,34 @@ export function appendCarousel(element) {
 }
 
 export function start() {
-  const multipleCardCarousel = document.querySelector(
-    "#carouselExampleControls"
-  );
+  const multipleCardCarousel = document.querySelector("#carouselExampleControls");
   if (window.matchMedia("(min-width: 768px)").matches) {
     const carousel = new bootstrap.Carousel(multipleCardCarousel, {
-      interval: false
+      interval: false,
     });
     const carouselWidth = $(".carousel-inner")[0].scrollWidth;
     const cardWidth = $(".carousel-item").width();
     let scrollPosition = 0;
     $("#carouselExampleControls .carousel-control-next").unbind();
-    $("#carouselExampleControls .carousel-control-next").on(
-      "click",
-      function () {
-        if (scrollPosition < carouselWidth - cardWidth * 4) {
-          scrollPosition += cardWidth;
-          $("#carouselExampleControls .carousel-inner").animate(
-            { scrollLeft: scrollPosition },
-            600
-          );
-        }
+    $("#carouselExampleControls .carousel-control-next").on("click", function () {
+      if (scrollPosition < carouselWidth - cardWidth * 4) {
+        scrollPosition += cardWidth;
+        $("#carouselExampleControls .carousel-inner").animate(
+          { scrollLeft: scrollPosition },
+          600
+        );
       }
-    );
+    });
     $("#carouselExampleControls .carousel-control-prev").unbind();
-    $("#carouselExampleControls .carousel-control-prev").on(
-      "click",
-      function () {
-        if (scrollPosition > 0) {
-          scrollPosition -= cardWidth;
-          $("#carouselExampleControls .carousel-inner").animate(
-            { scrollLeft: scrollPosition },
-            600
-          );
-        }
+    $("#carouselExampleControls .carousel-control-prev").on("click", function () {
+      if (scrollPosition > 0) {
+        scrollPosition -= cardWidth;
+        $("#carouselExampleControls .carousel-inner").animate(
+          { scrollLeft: scrollPosition },
+          600
+        );
       }
-    );
+    });
   } else {
     $(multipleCardCarousel).addClass("slide");
   }

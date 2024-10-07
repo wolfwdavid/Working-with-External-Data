@@ -1,29 +1,21 @@
-import * as Carousel from "/Carousel.js";
+import * as Carousel from "./Carousel.js";
 import axios from "axios";
 
 // The breed selection input element.
 const breedSelect = document.getElementById("breedSelect");
-// The information section div element.
 const infoDump = document.getElementById("infoDump");
-// The progress bar div element.
 const progressBar = document.getElementById("progressBar");
-// The get favorites button element.
 const getFavoritesBtn = document.getElementById("getFavoritesBtn");
 
-// Step 0: Store your API key here for reference and easy access.
+// API key
 const API_KEY = 'live_Emqpg66Ia69I9yepqFBUnnBvxOJoaKX20yigbe1IkZvkrjPFBO9otgvUN1itcLhg';
+
 
 // Set default axios settings
 axios.defaults.baseURL = 'https://api.thecatapi.com/v1';
 axios.defaults.headers.common['x-api-key'] = API_KEY;
 
-/**
- * 1. Create an async function "initialLoad" that does the following:
- * - Retrieve a list of breeds from the cat API using axios.
- * - Create new <options> for each of these breeds, and append them to breedSelect.
- *  - Each option should have a value attribute equal to the id of the breed.
- *  - Each option should display text equal to the name of the breed.
- */
+// Load breeds
 const initialLoad = async () => {
   try {
     const response = await axios.get('/breeds');
@@ -36,42 +28,31 @@ const initialLoad = async () => {
       breedSelect.appendChild(option);
     });
 
-    // Call the breed selection event handler to populate carousel initially
+    // Populate the carousel initially
     handleBreedSelection();
   } catch (error) {
     console.error('Error fetching breeds:', error);
   }
 };
 
-/**
- * 2. Create an event handler for breedSelect that does the following:
- * - Retrieve information on the selected breed from the cat API using axios.
- * - For each object in the response array, create a new element for the carousel.
- * - Use the other data to create an informational section within the infoDump element.
- * - Each new selection should clear, re-populate, and restart the Carousel.
- */
+// Handle breed selection
 const handleBreedSelection = async () => {
   const breedId = breedSelect.value;
-
   try {
     const response = await axios.get(`/images/search?breed_id=${breedId}&limit=5`, {
       onDownloadProgress: updateProgress
     });
 
     const images = response.data;
-
-   
     Carousel.clear();
     infoDump.innerHTML = '';
 
-    
     images.forEach(imageData => {
       const imgElement = document.createElement('img');
       imgElement.src = imageData.url;
-      Carousel.add(imgElement);
+      Carousel.appendCarousel(imgElement);
     });
 
-    
     const breedInfo = images[0].breeds[0];
     if (breedInfo) {
       infoDump.innerHTML = `
@@ -85,76 +66,62 @@ const handleBreedSelection = async () => {
   }
 };
 
-
+// Attach event listener to breedSelect
 breedSelect.addEventListener('change', handleBreedSelection);
 
-// Call the initial load immediately
+// Load initial data
 initialLoad();
 
-/**
- * 5. Add axios interceptors to log the time between request and response to the console.
- * - In your request interceptor, set the body element's cursor style to "progress."
- * - In your response interceptor, remove the progress cursor style from the body element.
- */
+// Axios interceptors
 axios.interceptors.request.use(config => {
   console.log('Request started at', new Date().toISOString());
-  document.body.style.cursor = 'progress'; // Show progress cursor
-  progressBar.style.width = '0%'; 
+  document.body.style.cursor = 'progress';
+  progressBar.style.width = '0%';
   return config;
 });
 
 axios.interceptors.response.use(response => {
   console.log('Request finished at', new Date().toISOString());
-  document.body.style.cursor = 'default'; // Reset cursor
-  progressBar.style.width = '100%'; 
+  document.body.style.cursor = 'default';
+  progressBar.style.width = '100%';
   return response;
 });
 
-/**
- * 6. Create a function "updateProgress" to handle axios onDownloadProgress.
- */
+// Update progress bar
 const updateProgress = (progressEvent) => {
   const percentage = Math.round((progressEvent.loaded * 100) / progressEvent.total);
   progressBar.style.width = `${percentage}%`;
   console.log(`Progress: ${percentage}%`);
 };
 
-/**
- * 8. To practice posting data, we'll create a system to "favorite" certain images.
- * Post to the cat API's favorites endpoint with the given ID.
- */
-export async function favorite(imgId) {
+// Favorite function
+export async function favourite(imgId) {
   try {
-    const response = await axios.post('/favorites', {
+    const response = await axios.post('/favourites', {
       image_id: imgId
     });
-    console.log('Image favored:', response.data);
+    console.log('Image favorited:', response.data);
   } catch (error) {
-    console.error('Error favouring image:', error);
+    console.error('Error favoriting image:', error);
   }
 }
 
-/**
- * 9. Create a getFavorites() function to retrieve all favorites from the cat API.
- * Clear the carousel and display your favorites when the button is clicked.
- */
+// Get favorites
 const getFavorites = async () => {
   try {
-    const response = await axios.get('/favorites');
+    const response = await axios.get('/favourites');
     const favorites = response.data;
 
-    // Clear carousel and display favorites
     Carousel.clear();
     favorites.forEach(favorite => {
       const imgElement = document.createElement('img');
       imgElement.src = favorite.image.url;
-      Carousel.add(imgElement);
+      Carousel.appendCarousel(imgElement);
     });
   } catch (error) {
     console.error('Error fetching favorites:', error);
   }
 };
 
-
+// Attach event listener to getFavoritesBtn
 getFavoritesBtn.addEventListener('click', getFavorites);
-
